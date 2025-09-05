@@ -1,9 +1,5 @@
-// =================================================================================
-// CONFIGURAÇÕES GLOBAIS
-// =================================================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8vZHicSMiSaZg1kL3CpoxMR7lCWSoY7vgnYupvxM_x6U7f_aJzSXeg9oz7uAZ8MYDjQ/exec';
 
-// Estrutura de dados com empresas, setores e responsáveis
 const ESTRUTURA = {
     usuarios: {
         "bijsterveld57@gmail.com": { nome: "Monique", perfil: "Financeiro" },
@@ -34,36 +30,27 @@ const ESTRUTURA = {
 };
 
 let currentUser = {};
-let auth2; // Variável global para a instância de autenticação
+let auth2;
 
-// =================================================================================
-// LÓGICA DE AUTENTICAÇÃO
-// =================================================================================
-
-// Esta função é chamada pelo script do Google DEPOIS que ele carregar
 function onGooglePlatformLoaded() {
     gapi.load('auth2', () => {
         gapi.auth2.init({
             client_id: document.querySelector('meta[name="google-signin-client_id"]').content
         }).then((googleAuth) => {
-            console.log("API do Google Auth2 inicializada.");
-            auth2 = googleAuth; // Salva a instância de autenticação
-
-            // Renderiza o botão manualmente agora que a API está pronta
+            console.log("API do Google Auth2 inicializada com sucesso.");
+            auth2 = googleAuth;
             renderGoogleButton();
-
-            // Verifica se o usuário já está logado
             if (auth2.isSignedIn.get()) {
                 handleUserLogin(auth2.currentUser.get());
             }
         }).catch(err => {
-            console.error("Erro ao inicializar Google Auth2:", err);
+            console.error("Erro ao inicializar Google Auth2:", JSON.stringify(err, null, 2));
         });
     });
 }
 
-// Nova função para renderizar o botão
 function renderGoogleButton() {
+    console.log("Renderizando botão de login do Google...");
     gapi.signin2.render('google-signin-button', {
         'scope': 'profile email',
         'width': 240,
@@ -76,7 +63,7 @@ function renderGoogleButton() {
 }
 
 function handleLoginFailure(error) {
-    console.error('Erro de login do Google:', error);
+    console.error('Erro de login do Google:', JSON.stringify(error, null, 2));
 }
 
 function handleUserLogin(googleUser) {
@@ -119,9 +106,6 @@ function showAppScreen() {
     document.getElementById('app-screen').classList.add('active');
 }
 
-// =================================================================================
-// CONTROLE DA INTERFACE DO USUÁRIO (UI)
-// =================================================================================
 function setupUIForUser() {
     document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
 
@@ -194,9 +178,6 @@ function setupPurchasingDashboard() {
     });
 }
 
-// =================================================================================
-// INICIALIZAÇÃO E EVENT LISTENERS GERAIS
-// =================================================================================
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('signout-button').addEventListener('click', signOut);
     document.getElementById('btn-cancel').addEventListener('click', () => {

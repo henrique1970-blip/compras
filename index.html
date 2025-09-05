@@ -1,21 +1,60 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://accounts.google.com; object-src 'none'; base-uri 'self';">
-    <title>Grupo Bijsterveld - Compras & Serviços</title>
+    <meta name="google-signin-client_id" content="SEU_CLIENT_ID.apps.googleusercontent.com">
+    <title>Compras & Serviços</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="./manifest.json">
-    <meta name="google-signin-client_id" content="658686250054-giqpj1a6tbnq742ga4m8a28b80imc4m8.apps.googleusercontent.com">
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://apis.google.com/js/platform.js?onload=onGooglePlatformLoaded" async defer></script>
+    <script src="script.js"></script>
 </head>
 <body>
-
     <div id="login-screen" class="screen active">
-        <header class="app-header">
-            <div class="logo"></div>
+        <div class="app-header">
             <h1>Compras & Serviços</h1>
-        </header>
+        </div>
         <div class="container">
             <h2>Bem-vindo</h2>
             <p>Por favor, faça login com sua conta Google para continuar.</p>
@@ -24,14 +63,14 @@
     </div>
 
     <div id="app-screen" class="screen">
-        <header class="app-header">
-            <div class="logo"></div>
+        <div class="app-header">
             <h1>Compras & Serviços</h1>
             <div class="user-info">
                 <span id="user-name"></span>
-                <button id="signout-button">Sair</button>
+                <button id="signout-button" class="btn">Sair</button>
             </div>
-        </header>
+        </div>
+
         <div id="requester-view" class="view">
             <div class="container">
                 <h2>Nova Solicitação</h2>
@@ -44,45 +83,66 @@
                     <h3 id="form-title"></h3>
                     <label for="empresa">Empresa:</label>
                     <select id="empresa" name="empresa" required></select>
+
                     <label for="setor">Setor / Centro de Custo:</label>
                     <select id="setor" name="setor" required></select>
-                    <div id="dynamic-fields"></div>
+
                     <label for="urgencia">Urgência (1=Baixa, 5=Alta):</label>
-                    <select id="urgencia" name="urgencia" required>
-                        <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option>
-                    </select>
+                    <div>
+                        <input type="radio" id="urgencia1" name="urgencia" value="1" required>
+                        <label for="urgencia1">1</label>
+                        <input type="radio" id="urgencia2" name="urgencia" value="2">
+                        <label for="urgencia2">2</label>
+                        <input type="radio" id="urgencia3" name="urgencia" value="3">
+                        <label for="urgencia3">3</label>
+                        <input type="radio" id="urgencia4" name="urgencia" value="4">
+                        <label for="urgencia4">4</label>
+                        <input type="radio" id="urgencia5" name="urgencia" value="5">
+                        <label for="urgencia5">5</label>
+                    </div>
+
                     <label for="fornecedor">Sugere fornecedor? Qual?</label>
                     <input type="text" id="fornecedor" name="fornecedor">
+
                     <label for="observacao">Observação:</label>
-                    <textarea id="observacao" name="observacao" rows="3"></textarea>
-                    <button type="submit" class="btn">Enviar Solicitação</button>
+                    <textarea id="observacao" name="observacao" rows="4"></textarea>
+
+                    <button type="submit" class="btn btn-success">Enviar Solicitação</button>
                     <button type="button" id="btn-cancel" class="btn btn-danger">Cancelar</button>
                 </form>
             </div>
         </div>
+
         <div id="purchasing-dashboard" class="view">
             <div class="container">
                 <h2>Dashboard - Setor de Compras</h2>
-                <div class="tabs"><button class="tab-link active" data-tab="tab-orcamento">Aguardando Orçamento</button><button class="tab-link" data-tab="tab-aprovados">Aprovados para Compra</button></div>
-                <div id="tab-orcamento" class="tab-content active"><h3>Pedidos Aguardando Orçamento</h3><div id="orcamento-list" class="request-list"></div></div>
-                <div id="tab-aprovados" class="tab-content"><h3>Pedidos Aprovados para Compra/Contratação</h3><div id="aprovados-list" class="request-list"></div></div>
+                <div class="tabs">
+                    <button class="tab-link active" data-tab="aguardando-orcamento">Aguardando Orçamento</button>
+                    <button class="tab-link" data-tab="aprovados-compra">Aprovados para Compra</button>
+                </div>
+                <div id="aguardando-orcamento" class="tab-content active">
+                    <h3>Pedidos Aguardando Orçamento</h3>
+                    <div class="request-list"></div>
+                </div>
+                <div id="aprovados-compra" class="tab-content">
+                    <h3>Pedidos Aprovados para Compra/Contratação</h3>
+                    <div class="request-list"></div>
+                </div>
             </div>
         </div>
+
         <div id="finance-dashboard" class="view">
-             <div class="container">
+            <div class="container">
                 <h2>Dashboard - Financeiro</h2>
                 <h3>Pedidos Aguardando Aprovação</h3>
-                <div id="finance-list" class="request-list"></div>
+                <div class="request-list"></div>
             </div>
         </div>
     </div>
-    
+
     <div id="loading-overlay" class="overlay">
         <div class="spinner"></div>
         <p>Carregando...</p>
     </div>
-
-    <script src="script.js"></script>
-    <script src="https://apis.google.com/js/platform.js?onload=onGooglePlatformLoaded" async defer></script>
 </body>
 </html>
