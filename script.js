@@ -34,42 +34,49 @@ const ESTRUTURA = {
 };
 
 let currentUser = {};
+let auth2; // Variável global para a instância de autenticação
 
 // =================================================================================
 // LÓGICA DE AUTENTICAÇÃO
 // =================================================================================
 
 // Esta função é chamada pelo script do Google DEPOIS que ele carregar
-function initGapiClient() {
+function onGooglePlatformLoaded() {
     gapi.load('auth2', () => {
         gapi.auth2.init({
             client_id: document.querySelector('meta[name="google-signin-client_id"]').content
-        }).then(() => {
-            console.log("API do Google inicializada.");
-            attachSignIn(document.getElementById('custom-signin-button'));
-            
-            // Opcional: Verificar se o usuário já está logado
-            const authInstance = gapi.auth2.getAuthInstance();
-            if (authInstance.isSignedIn.get()) {
-                handleUserLogin(authInstance.currentUser.get());
+        }).then((googleAuth) => {
+            console.log("API do Google Auth2 inicializada.");
+            auth2 = googleAuth; // Salva a instância de autenticação
+
+            // Renderiza o botão manualmente agora que a API está pronta
+            renderGoogleButton();
+
+            // Verifica se o usuário já está logado
+            if (auth2.isSignedIn.get()) {
+                handleUserLogin(auth2.currentUser.get());
             }
+        }).catch(err => {
+            console.error("Erro ao inicializar Google Auth2:", err);
         });
     });
 }
 
-// Função para anexar o evento de clique ao nosso botão customizado
-function attachSignIn(element) {
-    const auth2 = gapi.auth2.getAuthInstance();
-    element.addEventListener('click', () => {
-        auth2.signIn().then(
-            (googleUser) => { // Callback de sucesso
-                handleUserLogin(googleUser);
-            },
-            (error) => { // Callback de erro
-                console.error('Erro durante o login:', JSON.stringify(error, undefined, 2));
-            }
-        );
+// Nova função para renderizar o botão
+function renderGoogleButton() {
+    gapi.signin2.render('google-signin-button', {
+        'scope': 'profile email',
+        'width': 240,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': handleUserLogin,
+        'onfailure': handleLoginFailure
     });
+}
+
+function handleLoginFailure(error) {
+    console.error('Erro de login do Google:', error);
 }
 
 function handleUserLogin(googleUser) {
@@ -92,9 +99,8 @@ function handleUserLogin(googleUser) {
 }
 
 function signOut() {
-    const authInstance = gapi.auth2.getAuthInstance();
-    if (authInstance) {
-        authInstance.signOut().then(() => {
+    if (auth2) {
+        auth2.signOut().then(() => {
             currentUser = {};
             showLoginScreen();
         });
