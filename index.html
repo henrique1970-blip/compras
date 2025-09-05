@@ -6,7 +6,6 @@
     <title>Grupo Bijsterveld - Compras & Serviços</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="./manifest.json">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="658686250054-giqpj1a6tbnq742ga4m8a28b80imc4m8.apps.googleusercontent.com">
 </head>
 <body>
@@ -19,7 +18,10 @@
         <div class="container">
             <h2>Bem-vindo</h2>
             <p>Por favor, faça login com sua conta Google para continuar.</p>
-            <div id="google-signin-button" class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+            <button id="custom-signin-button" class="btn">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 10px;"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+                Fazer login com o Google
+            </button>
         </div>
     </div>
 
@@ -32,7 +34,6 @@
                 <button id="signout-button">Sair</button>
             </div>
         </header>
-
         <div id="requester-view" class="view">
             <div class="container">
                 <h2>Nova Solicitação</h2>
@@ -41,55 +42,34 @@
                     <button id="btn-show-compra" class="btn btn-success">COMPRA</button>
                     <button id="btn-show-servico" class="btn btn-warning">SERVIÇO</button>
                 </div>
-
                 <form id="request-form" class="hidden">
                     <h3 id="form-title"></h3>
                     <label for="empresa">Empresa:</label>
                     <select id="empresa" name="empresa" required></select>
-
                     <label for="setor">Setor / Centro de Custo:</label>
                     <select id="setor" name="setor" required></select>
-                    
-                    <div id="dynamic-fields"></div> <label for="urgencia">Urgência (1=Baixa, 5=Alta):</label>
+                    <div id="dynamic-fields"></div>
+                    <label for="urgencia">Urgência (1=Baixa, 5=Alta):</label>
                     <select id="urgencia" name="urgencia" required>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3" selected>3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
+                        <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option>
                     </select>
-                    
                     <label for="fornecedor">Sugere fornecedor? Qual?</label>
                     <input type="text" id="fornecedor" name="fornecedor">
-                    
                     <label for="observacao">Observação:</label>
                     <textarea id="observacao" name="observacao" rows="3"></textarea>
-                    
                     <button type="submit" class="btn">Enviar Solicitação</button>
                     <button type="button" id="btn-cancel" class="btn btn-danger">Cancelar</button>
                 </form>
             </div>
         </div>
-
         <div id="purchasing-dashboard" class="view">
             <div class="container">
                 <h2>Dashboard - Setor de Compras</h2>
-                <div class="tabs">
-                    <button class="tab-link active" data-tab="tab-orcamento">Aguardando Orçamento</button>
-                    <button class="tab-link" data-tab="tab-aprovados">Aprovados para Compra</button>
-                </div>
-
-                <div id="tab-orcamento" class="tab-content active">
-                    <h3>Pedidos Aguardando Orçamento</h3>
-                    <div id="orcamento-list" class="request-list"></div>
-                </div>
-                <div id="tab-aprovados" class="tab-content">
-                    <h3>Pedidos Aprovados para Compra/Contratação</h3>
-                    <div id="aprovados-list" class="request-list"></div>
-                </div>
+                <div class="tabs"><button class="tab-link active" data-tab="tab-orcamento">Aguardando Orçamento</button><button class="tab-link" data-tab="tab-aprovados">Aprovados para Compra</button></div>
+                <div id="tab-orcamento" class="tab-content active"><h3>Pedidos Aguardando Orçamento</h3><div id="orcamento-list" class="request-list"></div></div>
+                <div id="tab-aprovados" class="tab-content"><h3>Pedidos Aprovados para Compra/Contratação</h3><div id="aprovados-list" class="request-list"></div></div>
             </div>
         </div>
-        
         <div id="finance-dashboard" class="view">
              <div class="container">
                 <h2>Dashboard - Financeiro</h2>
@@ -106,6 +86,5 @@
 
     <script src="script.js"></script>
     <script src="https://apis.google.com/js/platform.js?onload=initGapiClient" async defer></script>
-
 </body>
 </html>
