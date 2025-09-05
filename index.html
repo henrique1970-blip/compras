@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grupo Bijsterveld - Compras & Serviços</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="658686250054-giqpj1a6tbnq742ga4m8a28b80imc4m8.apps.googleusercontent.com">
-    
 </head>
 <body>
 
@@ -55,7 +54,7 @@
                     <select id="urgencia" name="urgencia" required>
                         <option value="1">1</option>
                         <option value="2">2</option>
-                        <option value="3">3</option>
+                        <option value="3" selected>3</option>
                         <option value="4">4</option>
                         <option value="5">5</option>
                     </select>
@@ -106,5 +105,7 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="https://apis.google.com/js/platform.js?onload=initGapiClient" async defer></script>
+
 </body>
 </html>

@@ -51,7 +51,29 @@ let currentUser = {}; // Objeto para guardar informações do usuário logado
 // =================================================================================
 // LÓGICA DE AUTENTICAÇÃO E LOGIN
 // =================================================================================
+
+// Esta função é chamada DEPOIS que a biblioteca do Google está pronta
+function initGapiClient() {
+    gapi.load('auth2', () => {
+        gapi.auth2.init({
+            client_id: document.querySelector('meta[name="google-signin-client_id"]').content
+        }).then(() => {
+            console.log("API do Google inicializada.");
+            // Opcional: Verificar se o usuário já está logado
+            const authInstance = gapi.auth2.getAuthInstance();
+            if (authInstance.isSignedIn.get()) {
+                handleUserLogin(authInstance.currentUser.get());
+            }
+        });
+    });
+}
+
+
 function onSignIn(googleUser) {
+    handleUserLogin(googleUser);
+}
+
+function handleUserLogin(googleUser) {
     const profile = googleUser.getBasicProfile();
     const userEmail = profile.getEmail();
 
@@ -70,12 +92,18 @@ function onSignIn(googleUser) {
     }
 }
 
+
 function signOut() {
-    const auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(() => {
-        currentUser = {};
+    const authInstance = gapi.auth2.getAuthInstance();
+    if (authInstance) {
+        authInstance.signOut().then(() => {
+            currentUser = {};
+            showLoginScreen();
+        });
+    } else {
+         // Se a instância não carregar, apenas volta para a tela de login
         showLoginScreen();
-    });
+    }
 }
 
 function showLoginScreen() {
@@ -195,10 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('request-form').reset();
     });
     
-    // Inicialização da API do Google
-    gapi.load('auth2', () => {
-        gapi.auth2.init({
-            client_id: document.querySelector('meta[name="google-signin-client_id"]').content
-        });
-    });
+    // A inicialização do GAPI foi movida para a função initGapiClient
+    // que é chamada pelo script do Google no HTML
 });
