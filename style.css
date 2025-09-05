@@ -1,0 +1,153 @@
+/* Estilos Gerais */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+.view { display: none; }
+.view.active { display: block; }
+
+.hidden { display: none !important; }
+
+/* Cabeçalho */
+.app-header {
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.app-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+}
+#user-name {
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+/* Conteúdo Principal */
+.container {
+    padding: 20px;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 800px;
+    border-radius: 8px;
+}
+
+/* Botões */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    color: white;
+    margin: 5px;
+}
+.btn-success { background-color: #28a745; }
+.btn-warning { background-color: #ffc107; }
+.btn-danger { background-color: #dc3545; }
+.action-buttons { margin: 20px 0; }
+#signout-button { background-color: #6c757d; }
+
+/* Formulários */
+#request-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+#request-form label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+#request-form input,
+#request-form select,
+#request-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+#request-form button[type="submit"] {
+    background-color: #007bff;
+    margin-top: 20px;
+}
+
+/* Dashboards e Tabs */
+.tabs {
+    overflow: hidden;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+.tab-link {
+    background-color: #f1f1f1;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+.tab-link:hover { background-color: #ddd; }
+.tab-link.active { background-color: #ccc; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Lista de Pedidos */
+.request-list {
+    border-collapse: collapse;
+    width: 100%;
+}
+.request-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.request-list th, .request-list td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+.request-list th {
+    background-color: #f2f2f2;
+}
+
+/* Overlay de Carregamento */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

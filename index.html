@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grupo Bijsterveld - Compras & Serviços</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="658686250054-giqpj1a6tbnq742ga4m8a28b80imc4m8.apps.googleusercontent.com">
+    
+</head>
+<body>
+
+    <div id="login-screen" class="screen active">
+        <header class="app-header">
+            <div class="logo"></div>
+            <h1>Compras & Serviços</h1>
+        </header>
+        <div class="container">
+            <h2>Bem-vindo</h2>
+            <p>Por favor, faça login com sua conta Google para continuar.</p>
+            <div id="google-signin-button" class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+        </div>
+    </div>
+
+    <div id="app-screen" class="screen">
+        <header class="app-header">
+            <div class="logo"></div>
+            <h1>Compras & Serviços</h1>
+            <div class="user-info">
+                <span id="user-name"></span>
+                <button id="signout-button">Sair</button>
+            </div>
+        </header>
+
+        <div id="requester-view" class="view">
+            <div class="container">
+                <h2>Nova Solicitação</h2>
+                <p>Selecione o tipo de solicitação que deseja fazer.</p>
+                <div class="action-buttons">
+                    <button id="btn-show-compra" class="btn btn-success">COMPRA</button>
+                    <button id="btn-show-servico" class="btn btn-warning">SERVIÇO</button>
+                </div>
+
+                <form id="request-form" class="hidden">
+                    <h3 id="form-title"></h3>
+                    <label for="empresa">Empresa:</label>
+                    <select id="empresa" name="empresa" required></select>
+
+                    <label for="setor">Setor / Centro de Custo:</label>
+                    <select id="setor" name="setor" required></select>
+                    
+                    <div id="dynamic-fields"></div> <label for="urgencia">Urgência (1=Baixa, 5=Alta):</label>
+                    <select id="urgencia" name="urgencia" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    
+                    <label for="fornecedor">Sugere fornecedor? Qual?</label>
+                    <input type="text" id="fornecedor" name="fornecedor">
+                    
+                    <label for="observacao">Observação:</label>
+                    <textarea id="observacao" name="observacao" rows="3"></textarea>
+                    
+                    <button type="submit" class="btn">Enviar Solicitação</button>
+                    <button type="button" id="btn-cancel" class="btn btn-danger">Cancelar</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="purchasing-dashboard" class="view">
+            <div class="container">
+                <h2>Dashboard - Setor de Compras</h2>
+                <div class="tabs">
+                    <button class="tab-link active" data-tab="tab-orcamento">Aguardando Orçamento</button>
+                    <button class="tab-link" data-tab="tab-aprovados">Aprovados para Compra</button>
+                </div>
+
+                <div id="tab-orcamento" class="tab-content active">
+                    <h3>Pedidos Aguardando Orçamento</h3>
+                    <div id="orcamento-list" class="request-list"></div>
+                </div>
+                <div id="tab-aprovados" class="tab-content">
+                    <h3>Pedidos Aprovados para Compra/Contratação</h3>
+                    <div id="aprovados-list" class="request-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="finance-dashboard" class="view">
+             <div class="container">
+                <h2>Dashboard - Financeiro</h2>
+                <h3>Pedidos Aguardando Aprovação</h3>
+                <div id="finance-list" class="request-list"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="overlay">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
